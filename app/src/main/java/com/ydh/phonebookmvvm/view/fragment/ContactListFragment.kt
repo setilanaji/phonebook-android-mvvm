@@ -7,9 +7,7 @@ import androidx.fragment.app.Fragment
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.viewModels
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.ui.NavigationUI
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.ydh.phonebookmvvm.R
 import com.ydh.phonebookmvvm.databinding.ContactMenuDialogBinding
@@ -17,23 +15,17 @@ import com.ydh.phonebookmvvm.databinding.FragmentContactListBinding
 import com.ydh.phonebookmvvm.model.ContactModel
 import com.ydh.phonebookmvvm.repository.ContactLocalRepository
 import com.ydh.phonebookmvvm.repository.ContactRemoteRepository
-import com.ydh.phonebookmvvm.repository.UserRemoteRepository
 import com.ydh.phonebookmvvm.repository.local.ContactLocalRepositoryImpl
 import com.ydh.phonebookmvvm.repository.local.dao.ContactDao
 import com.ydh.phonebookmvvm.repository.local.database.LocalDB
 import com.ydh.phonebookmvvm.repository.remote.ContactRemoteRepositoryImpl
-import com.ydh.phonebookmvvm.repository.remote.UserRemoteRepositoryImpl
 import com.ydh.phonebookmvvm.repository.remote.client.Api
 import com.ydh.phonebookmvvm.repository.remote.service.ContactService
-import com.ydh.phonebookmvvm.repository.remote.service.UserService
 import com.ydh.phonebookmvvm.view.adapter.ContactAdapter
 import com.ydh.phonebookmvvm.view.adapter.FavoriteAdapter
 import com.ydh.phonebookmvvm.view.state.ContactListState
-import com.ydh.phonebookmvvm.view.state.SignInState
 import com.ydh.phonebookmvvm.viewmodel.ContactListViewModel
 import com.ydh.phonebookmvvm.viewmodel.ContactListViewModelFactory
-import com.ydh.phonebookmvvm.viewmodel.SignInViewModel
-import com.ydh.phonebookmvvm.viewmodel.SignInViewModelFactory
 
 
 class ContactListFragment : Fragment(), ContactAdapter.ContactListener,
@@ -106,14 +98,17 @@ class ContactListFragment : Fragment(), ContactAdapter.ContactListener,
                 }
                 is ContactListState.SuccessGetAllFavorite -> {
                     favAdapter.list = it.list.toMutableList()
-                    onResume()
                     hideFavBar(false)
                 }
                 is ContactListState.SuccessInsertFavorite -> {
                     favAdapter.insertTodo(it.list)
+                    hideFavBar(false)
+
                 }
                 is ContactListState.SuccessDeleteFavorite -> {
                     favAdapter.deleteTodo(it.list)
+                    viewModel.getAllFav()
+
                 }
                 is ContactListState.EmptyFavorite -> {
                     hideFavBar(true)

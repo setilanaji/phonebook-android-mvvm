@@ -63,7 +63,6 @@ class ContactListViewModel (
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val todoEntityList = localRepository.getAllContact()
-
                 if (!todoEntityList.isNullOrEmpty()){
                     val todoModelList = todoEntityList.asSequence().map { it.toModel() }.toList()
                     mutableState.postValue(ContactListState.SuccessGetAllFavorite(todoModelList))
