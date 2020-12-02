@@ -51,10 +51,15 @@ class SignInFragment : Fragment() {
 
     private fun setView(){
 
-        binding.btLogLogin.setOnClickListener{
+        binding.run {
+            btLogLogin.setOnClickListener{
             viewModel.login(
-                et_login_user_email.text.toString(),
-                et_login_user_password.text.toString())
+                    et_login_user_email.text.toString(),
+                    et_login_user_password.text.toString())
+        }
+           btLogToRegister.setOnClickListener {
+               findNavController().navigate(R.id.action_signInFragment_to_signUpFragment)
+           }
         }
     }
 

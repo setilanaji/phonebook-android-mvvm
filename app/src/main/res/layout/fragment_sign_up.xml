@@ -8,6 +8,7 @@
 
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/cv_register"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
@@ -26,10 +27,10 @@
             android:orientation="vertical">
 
             <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_margin="8dp"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                android:layout_margin="8dp">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_register_user_name"
@@ -39,10 +40,10 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_margin="8dp"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                android:layout_margin="8dp">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_register_user_email"
@@ -52,18 +53,18 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_margin="8dp"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                android:layout_margin="8dp">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_register_user_password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:hint="Password"
                     android:inputType="textPassword"
-                    app:endIconMode="password_toggle"
-                    android:hint="Password" />
+                    app:endIconMode="password_toggle" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <Button
@@ -78,4 +79,15 @@
 
         </LinearLayout>
     </androidx.cardview.widget.CardView>
+
+    <ProgressBar
+        android:id="@+id/pb_register"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
