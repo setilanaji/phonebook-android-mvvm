@@ -1,13 +1,15 @@
 package com.ydh.phonebookmvvm.view.fragment
 
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.viewModels
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.NavigationUI
 import com.ydh.phonebookmvvm.R
 import com.ydh.phonebookmvvm.databinding.FragmentContactListBinding
 import com.ydh.phonebookmvvm.model.ContactModel
@@ -57,6 +59,14 @@ class ContactListFragment : Fragment(), ContactAdapter.ContactListerner {
     }
 
     private fun setView(){
+        val colorDrawable = ColorDrawable(resources.getColor(R.color.bg_main))
+        (activity as AppCompatActivity).supportActionBar?.setBackgroundDrawable(colorDrawable)
+        (activity as AppCompatActivity).supportActionBar?.elevation = 0.0F
+        (activity as AppCompatActivity).supportActionBar?.title = "Get Contact"
+
+
+        setHasOptionsMenu(true)
+
 
         binding.apply {
             rvContactList.adapter = adapter
@@ -82,6 +92,20 @@ class ContactListFragment : Fragment(), ContactAdapter.ContactListerner {
         }
     }
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.main_menu, menu)
+
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return NavigationUI.onNavDestinationSelected(
+                item,
+                requireView().findNavController()
+        ) || super.onOptionsItemSelected(item)
+    }
+
+
     override fun onResume() {
         super.onResume()
         viewModel.getAllContact()
@@ -99,7 +123,8 @@ class ContactListFragment : Fragment(), ContactAdapter.ContactListerner {
     }
 
     override fun onClick(contactModel: ContactModel) {
-        TODO("Not yet implemented")
+        val action = ContactListFragmentDirections.actionContactListFragmentToContactDetailFragment(contactModel)
+        findNavController().navigate(action)
     }
 
     override fun onDelete(id: Long) {

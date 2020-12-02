@@ -18,4 +18,9 @@ class UserRemoteRepositoryImpl (private val service: UserService): UserRemoteRep
         return service.userRegister(bodyRegistration)
     }
 
+    override suspend fun logout() {
+
+    }
+
+
 }

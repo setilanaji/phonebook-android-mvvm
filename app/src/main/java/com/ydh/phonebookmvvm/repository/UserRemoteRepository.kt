@@ -10,5 +10,5 @@ interface UserRemoteRepository {
 
     suspend fun userLogin(loginBody: LoginBody): ResponseModel<UserModel>
     suspend fun userRegister(bodyRegistration: BodyRegistration): ResponseModel<String>
-
+    suspend fun logout()
 }
