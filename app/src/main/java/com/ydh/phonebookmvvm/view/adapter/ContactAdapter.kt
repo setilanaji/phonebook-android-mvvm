@@ -77,10 +77,8 @@ class ContactAdapter(
     }
 
     fun deleteContact(position: Int) {
-//
-            contactList.removeAt(position)
-            notifyItemRemoved(position)
-
+        contactList.removeAt(position)
+        notifyItemRemoved(position)
     }
 
     fun updateContact(contactModel: Contact) {
@@ -102,9 +100,9 @@ class ContactAdapter(
 
     interface ContactListener {
         fun onClick(contactModel: ContactModel)
-        fun onDelete(id: Long)
+        fun onDelete(contactModel: ContactModel, position: Int)
         fun onFavorite(contactModel: ContactModel)
-        fun onLongPress(contactModel: ContactModel)
+        fun onLongPress(contactModel: ContactModel, position: Int)
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
@@ -148,7 +146,7 @@ class ContactAdapter(
                 listener.onClick(itemBinding.contact!!)
             }
             this.itemBinding.cvContact.setOnLongClickListener {
-                listener.onLongPress(itemBinding.contact!!)
+                listener.onLongPress(itemBinding.contact!!, bindingAdapterPosition-1)
                 return@setOnLongClickListener true
             }
 

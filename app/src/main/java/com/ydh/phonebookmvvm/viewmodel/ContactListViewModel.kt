@@ -45,14 +45,14 @@ class ContactListViewModel (
         }
     }
 
-    fun deleteTodo(contactModel: ContactModel) {
+    fun deleteContact(contactModel: ContactModel, position: Int) {
         mutableState.value = ContactListState.Loading()
 
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val contactResponse = remoteRepository.deleteContact(token!!, contactModel.id)
                 val model = contactResponse.data
-                mutableState.postValue(ContactListState.SuccessDeleteContact(contactModel))
+                mutableState.postValue(ContactListState.SuccessDeleteContact(contactModel, position))
             } catch (exc: Exception) {
                 onError(exc)
             }

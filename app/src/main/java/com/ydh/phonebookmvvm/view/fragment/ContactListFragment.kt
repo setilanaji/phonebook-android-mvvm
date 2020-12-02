@@ -10,7 +10,9 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.ydh.phonebookmvvm.R
+import com.ydh.phonebookmvvm.databinding.ContactMenuDialogBinding
 import com.ydh.phonebookmvvm.databinding.FragmentContactListBinding
 import com.ydh.phonebookmvvm.model.ContactModel
 import com.ydh.phonebookmvvm.repository.ContactLocalRepository
@@ -34,16 +36,26 @@ import com.ydh.phonebookmvvm.viewmodel.SignInViewModel
 import com.ydh.phonebookmvvm.viewmodel.SignInViewModelFactory
 
 
-class ContactListFragment : Fragment(), ContactAdapter.ContactListener, FavoriteAdapter.FavoriteListener {
+class ContactListFragment : Fragment(), ContactAdapter.ContactListener,
+    FavoriteAdapter.FavoriteListener {
 
     lateinit var binding: FragmentContactListBinding
     private val adapter by lazy { ContactAdapter(requireActivity(), this) }
     private val favAdapter by lazy { FavoriteAdapter(requireActivity(), this) }
     private val service: ContactService by lazy { Api.contactService }
     private val dao: ContactDao by lazy { LocalDB.getDB(requireContext()).dao() }
-    private val remoteRepository: ContactRemoteRepository by lazy { ContactRemoteRepositoryImpl(service) }
+    private val remoteRepository: ContactRemoteRepository by lazy {
+        ContactRemoteRepositoryImpl(
+            service
+        )
+    }
     private val localRepository: ContactLocalRepository by lazy { ContactLocalRepositoryImpl(dao) }
-    private val viewModelFactory by lazy { ContactListViewModelFactory(remoteRepository, localRepository) }
+    private val viewModelFactory by lazy {
+        ContactListViewModelFactory(
+            remoteRepository,
+            localRepository
+        )
+    }
     private val viewModel by viewModels<ContactListViewModel> { viewModelFactory }
 
 
@@ -60,28 +72,24 @@ class ContactListFragment : Fragment(), ContactAdapter.ContactListener, Favorite
         return binding.root
     }
 
-    private fun setView(){
+    private fun setView() {
         val colorDrawable = ColorDrawable(resources.getColor(R.color.bg_main))
         (activity as AppCompatActivity).supportActionBar?.setBackgroundDrawable(colorDrawable)
         (activity as AppCompatActivity).supportActionBar?.elevation = 0.0F
         (activity as AppCompatActivity).supportActionBar?.title = "Get Contact"
 
-
         setHasOptionsMenu(true)
-
 
         binding.run {
             rvContactList.adapter = adapter
             rvFavorite.adapter = favAdapter
 
         }
-
-
     }
 
-    private fun setObserver(){
-        viewModel.state.observe(viewLifecycleOwner){
-            when(it){
+    private fun setObserver() {
+        viewModel.state.observe(viewLifecycleOwner) {
+            when (it) {
                 is ContactListState.Loading -> showLoading(true)
                 is ContactListState.Error -> {
                     showLoading(false)
@@ -91,8 +99,14 @@ class ContactListFragment : Fragment(), ContactAdapter.ContactListener, Favorite
                     adapter.generateContact(it.list.toMutableList())
                     showLoading(false)
                 }
+                is ContactListState.SuccessDeleteContact -> {
+                    adapter.deleteContact(it.position)
+                    showMessage("${it.list.name} has been deleted from contact")
+                    onResume()
+                }
                 is ContactListState.SuccessGetAllFavorite -> {
                     favAdapter.list = it.list.toMutableList()
+                    onResume()
                     hideFavBar(false)
                 }
                 is ContactListState.SuccessInsertFavorite -> {
@@ -118,7 +132,10 @@ class ContactListFragment : Fragment(), ContactAdapter.ContactListener, Favorite
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.addFragment -> {
-                val action = ContactListFragmentDirections.actionContactListFragmentToAddFragment(null, "ADD")
+                val action = ContactListFragmentDirections.actionContactListFragmentToAddFragment(
+                    null,
+                    "ADD"
+                )
                 findNavController().navigate(action)
                 true
             }
@@ -133,7 +150,7 @@ class ContactListFragment : Fragment(), ContactAdapter.ContactListener, Favorite
         viewModel.getAllFav()
     }
 
-    private fun hideFavBar(isEmpty: Boolean){
+    private fun hideFavBar(isEmpty: Boolean) {
         binding.run {
             rvFavorite.visibility = if (isEmpty) View.GONE else View.VISIBLE
         }
@@ -151,22 +168,49 @@ class ContactListFragment : Fragment(), ContactAdapter.ContactListener, Favorite
     }
 
     override fun onClick(contactModel: ContactModel) {
-        val action = ContactListFragmentDirections.actionContactListFragmentToContactDetailFragment(contactModel)
+        val action = ContactListFragmentDirections.actionContactListFragmentToContactDetailFragment(
+            contactModel
+        )
         findNavController().navigate(action)
     }
 
-    override fun onDelete(id: Long) {
-        TODO("Not yet implemented")
+    override fun onDelete(contactModel: ContactModel, position: Int) {
+        viewModel.deleteContact(contactModel, position)
     }
 
     override fun onFavorite(contactModel: ContactModel) {
-        TODO("Not yet implemented")
+        viewModel.submitFavorite(contactModel)
     }
 
-    override fun onLongPress(contactModel: ContactModel) {
-        Toast.makeText(requireActivity(), "Long Pressed worked", Toast.LENGTH_SHORT).show()
+    override fun onLongPress(contactModel: ContactModel, position: Int) {
+        val dialog = BottomSheetDialog(requireContext())
+        val x = ContactMenuDialogBinding.inflate(LayoutInflater.from(context), null, false)
+        x.run {
+            tvName.text = contactModel.name
+            tvView.setOnClickListener {
+                dialog.hide()
+                onClick(contactModel)
+            }
+            tvEdit.setOnClickListener {
+                dialog.hide()
+                val action = ContactListFragmentDirections.actionContactListFragmentToAddFragment(
+                    contactModel,
+                    "EDIT"
+                )
+                findNavController().navigate(action)
+            }
+            tvFavorite.setOnClickListener {
+                dialog.hide()
+                onFavorite(contactModel)
+            }
+            tvDelete.setOnClickListener {
+                dialog.hide()
+                onDelete(contactModel, position)
+            }
 
-
+        }
+        dialog.setContentView(x.root)
+        dialog.show()
     }
 
 
