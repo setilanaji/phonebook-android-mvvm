@@ -9,10 +9,10 @@ import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.BindingAdapter
 import androidx.databinding.DataBindingUtil
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.ydh.phonebookmvvm.R
 import com.ydh.phonebookmvvm.databinding.FragmentContactDetailBinding
-import kotlinx.android.synthetic.main.fragment_contact_detail.*
 
 
 class ContactDetailFragment : Fragment() {
@@ -33,12 +33,17 @@ class ContactDetailFragment : Fragment() {
 
      private fun setView(){
 
-         binding.let {
+         binding.run {
             arguments?.let {
                 val args = ContactDetailFragmentArgs.fromBundle(it)
                 println(args.contact.toString())
                 binding.contact = args.contact
             }
+             btDetailEdit.setOnClickListener {
+                 val action = ContactDetailFragmentDirections.actionContactDetailFragmentToAddFragment(binding.contact, "EDIT")
+                 findNavController().navigate(action)
+
+             }
         }
     }
 

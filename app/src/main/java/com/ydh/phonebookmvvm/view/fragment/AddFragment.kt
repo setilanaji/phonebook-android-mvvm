@@ -50,16 +50,41 @@ class AddFragment : Fragment() {
 
     private fun setView(){
         binding.run {
+            var status = ""
+
+            arguments?.let {
+                val args = AddFragmentArgs.fromBundle(it)
+                println(args.contact.toString())
+                binding.contact = args.contact
+                status = args.fromStatus
+            }
+
             btAddContact.setOnClickListener {
-                viewModel.insertContact(
-                    BodyAddContact(
-                        etAddContactName.text.toString(),
-                        etAddContactPhone.text.toString(),
-                        etAddContactJob.text.toString(),
-                        etAddContactCompany.text.toString(),
-                        etAddContactEmail.text.toString()
-                    )
-                )
+                when (status) {
+                    "ADD" -> {
+                        viewModel.insertContact(
+                            BodyAddContact(
+                                etAddContactName.text.toString(),
+                                etAddContactPhone.text.toString(),
+                                etAddContactJob.text.toString(),
+                                etAddContactCompany.text.toString(),
+                                etAddContactEmail.text.toString()
+                            )
+                        )
+                    }
+                    "EDIT" -> {
+                        viewModel.updateContact(
+                            binding.contact!!.id,
+                            BodyAddContact(
+                                etAddContactName.text.toString(),
+                                etAddContactPhone.text.toString(),
+                                etAddContactJob.text.toString(),
+                                etAddContactCompany.text.toString(),
+                                etAddContactEmail.text.toString()
+                            )
+                        )
+                    }
+                }
             }
         }
     }
@@ -72,6 +97,10 @@ class AddFragment : Fragment() {
                     showMessage(it.exception.message ?: "Oops something went wrong")
                 }
                 is ContactAddState.SuccessInsertContact -> {
+                    showLoading(false)
+                    requireActivity().onBackPressed()
+                }
+                is ContactAddState.SuccessUpdateContact -> {
                     showLoading(false)
                     requireActivity().onBackPressed()
                 }

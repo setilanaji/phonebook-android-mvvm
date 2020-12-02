@@ -19,5 +19,5 @@ interface ContactDao {
     suspend fun deleteContact(contactEntity: ContactEntity)
 
     @Query("SELECT EXISTS(SELECT * FROM contact_table WHERE id = :id)")
-    suspend fun isFavorite(id: Long): Boolean
+    suspend fun isFavorite(id: Int): Boolean
 }

@@ -46,4 +46,17 @@ class AddContactViewModel (
         }
     }
 
+    fun updateContact(id: Int, bodyAddContact: BodyAddContact){
+        mutableState.value = ContactAddState.Loading()
+        viewModelScope.launch(Dispatchers.IO){
+            try {
+                val contact = remoteRepository.updateContact(token!!, id,  bodyAddContact )
+                mutableState.postValue(ContactAddState.SuccessUpdateContact(contact.data))
+            }catch (exc: Exception){
+                exc.printStackTrace()
+                mutableState.postValue(ContactAddState.Error(exc))
+            }
+        }
+    }
+
 }

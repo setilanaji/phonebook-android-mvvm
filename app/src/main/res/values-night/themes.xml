@@ -3,7 +3,7 @@
     <style name="Theme.Phonebookmvvm" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/purple_200</item>
-        <item name="colorPrimaryVariant">@color/blue_accent</item>
+        <item name="colorPrimaryVariant">@color/bg_main</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/teal_200</item>
@@ -12,5 +12,45 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
+        <item name="textInputStyle">@style/Widget.App.TextInputLayout</item>
     </style>
+
+
+    <style name="Widget.App.TextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="materialThemeOverlay">@style/ThemeOverlay.App.TextInputLayout</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.App.SmallComponent</item> //Changes the Shape Apperance
+        <!--<item name="hintTextColor">?attr/colorOnSurface</item>-->   //When you added this line it will applies only one color in normal and activate state i.e colorOnSurface color
+    </style>
+
+    <style name="ThemeOverlay.App.TextInputLayout" parent="">
+        <item name="colorPrimary">@color/blue_accent</item>  //Activated color
+        <item name="colorOnSurface">@color/white</item>    //Normal color
+        <item name="colorError">@color/red_accent</item>        //Error color
+
+        //Text Appearance styles
+<!--        <item name="textAppearanceSubtitle1">@style/TextAppearance.App.Subtitle1</item>-->
+<!--        <item name="textAppearanceCaption">@style/TextAppearance.App.Caption</item>-->
+
+        <!--Note: When setting a materialThemeOverlay on a custom TextInputLayout style, don’t forget to set editTextStyle to either a @style/Widget.MaterialComponents.TextInputEditText.* style or to a custom one that inherits from that.
+        The TextInputLayout styles set materialThemeOverlay that overrides editTextStyle with the specific TextInputEditText style needed. Therefore, you don’t need to specify a style tag on the edit text.-->
+        <item name="editTextStyle">@style/Widget.MaterialComponents.TextInputEditText.OutlinedBox</item>
+    </style>
+
+<!--    <style name="TextAppearance.App.Subtitle1" parent="TextAppearance.MaterialComponents.Subtitle1">-->
+<!--        <item name="fontFamily">@font/your_font</item>-->
+<!--        <item name="android:fontFamily">@font/your_font</item>-->
+<!--    </style>-->
+
+<!--    <style name="TextAppearance.App.Caption" parent="TextAppearance.MaterialComponents.Caption">-->
+<!--        <item name="fontFamily">@font/your_font</item>-->
+<!--        <item name="android:fontFamily">@font/your_font</item>-->
+<!--    </style>-->
+
+    <style name="ShapeAppearance.App.SmallComponent" parent="ShapeAppearance.MaterialComponents.SmallComponent">
+        <item name="cornerFamily">cut</item>
+        <item name="cornerSize">4dp</item>
+    </style>
+
+
+
 </resources>

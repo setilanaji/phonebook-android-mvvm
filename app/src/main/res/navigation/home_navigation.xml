@@ -12,7 +12,8 @@
         tools:layout="@layout/fragment_contact_list" >
         <action
             android:id="@+id/action_contactListFragment_to_addFragment"
-            app:destination="@id/addFragment" />
+            app:destination="@id/addFragment"
+            app:popUpTo="@id/contactListFragment" />
         <action
             android:id="@+id/action_contactListFragment_to_contactDetailFragment"
             app:destination="@id/contactDetailFragment"
@@ -28,7 +29,8 @@
         android:label="ContactDetailFragment" >
         <action
             android:id="@+id/action_contactDetailFragment_to_addFragment"
-            app:destination="@id/addFragment" />
+            app:destination="@id/addFragment"
+            app:popUpTo="@id/contactDetailFragment" />
         <argument
             android:name="contact"
             app:argType="com.ydh.phonebookmvvm.model.ContactModel" />
@@ -37,5 +39,14 @@
         android:id="@+id/addFragment"
         android:name="com.ydh.phonebookmvvm.view.fragment.AddFragment"
         android:label="fragment_add"
-        tools:layout="@layout/fragment_add" />
+        tools:layout="@layout/fragment_add" >
+        <argument
+            android:name="contact"
+            app:argType="com.ydh.phonebookmvvm.model.ContactModel"
+            app:nullable="true"
+            android:defaultValue="@null" />
+        <argument
+            android:name="fromStatus"
+            app:argType="string" />
+    </fragment>
 </navigation>

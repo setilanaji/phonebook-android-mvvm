@@ -6,5 +6,5 @@ interface ContactLocalRepository {
     suspend fun getAllContact(): List<ContactEntity>
     suspend fun insertContact(contactEntity: ContactEntity)
     suspend fun deleteContact(contactEntity: ContactEntity)
-    suspend fun isFavorite(id: Long): Boolean
+    suspend fun isFavorite(id: Int): Boolean
 }

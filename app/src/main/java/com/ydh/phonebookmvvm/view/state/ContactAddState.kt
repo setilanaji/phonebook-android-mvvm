@@ -6,4 +6,5 @@ sealed class ContactAddState {
     data class Loading(val message: String = "Loading...") : ContactAddState()
     data class Error(val exception: Exception) : ContactAddState()
     data class SuccessInsertContact(val todo: ContactModel) : ContactAddState()
+    data class SuccessUpdateContact(val todo: ContactModel) : ContactAddState()
 }

@@ -17,7 +17,7 @@ class ContactLocalRepositoryImpl(private val dao: ContactDao): ContactLocalRepos
         return dao.deleteContact(contactEntity)
     }
 
-    override suspend fun isFavorite(id: Long): Boolean {
+    override suspend fun isFavorite(id: Int): Boolean {
         return dao.isFavorite(id)
     }
 

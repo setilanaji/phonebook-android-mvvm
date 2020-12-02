@@ -25,6 +25,7 @@ import com.ydh.phonebookmvvm.repository.remote.client.Api
 import com.ydh.phonebookmvvm.repository.remote.service.ContactService
 import com.ydh.phonebookmvvm.repository.remote.service.UserService
 import com.ydh.phonebookmvvm.view.adapter.ContactAdapter
+import com.ydh.phonebookmvvm.view.adapter.FavoriteAdapter
 import com.ydh.phonebookmvvm.view.state.ContactListState
 import com.ydh.phonebookmvvm.view.state.SignInState
 import com.ydh.phonebookmvvm.viewmodel.ContactListViewModel
@@ -33,10 +34,11 @@ import com.ydh.phonebookmvvm.viewmodel.SignInViewModel
 import com.ydh.phonebookmvvm.viewmodel.SignInViewModelFactory
 
 
-class ContactListFragment : Fragment(), ContactAdapter.ContactListerner {
+class ContactListFragment : Fragment(), ContactAdapter.ContactListener, FavoriteAdapter.FavoriteListener {
 
     lateinit var binding: FragmentContactListBinding
     private val adapter by lazy { ContactAdapter(requireActivity(), this) }
+    private val favAdapter by lazy { FavoriteAdapter(requireActivity(), this) }
     private val service: ContactService by lazy { Api.contactService }
     private val dao: ContactDao by lazy { LocalDB.getDB(requireContext()).dao() }
     private val remoteRepository: ContactRemoteRepository by lazy { ContactRemoteRepositoryImpl(service) }
@@ -68,9 +70,12 @@ class ContactListFragment : Fragment(), ContactAdapter.ContactListerner {
         setHasOptionsMenu(true)
 
 
-        binding.apply {
+        binding.run {
             rvContactList.adapter = adapter
+            rvFavorite.adapter = favAdapter
+
         }
+
 
     }
 
@@ -86,6 +91,19 @@ class ContactListFragment : Fragment(), ContactAdapter.ContactListerner {
                     adapter.generateContact(it.list.toMutableList())
                     showLoading(false)
                 }
+                is ContactListState.SuccessGetAllFavorite -> {
+                    favAdapter.list = it.list.toMutableList()
+                    hideFavBar(false)
+                }
+                is ContactListState.SuccessInsertFavorite -> {
+                    favAdapter.insertTodo(it.list)
+                }
+                is ContactListState.SuccessDeleteFavorite -> {
+                    favAdapter.deleteTodo(it.list)
+                }
+                is ContactListState.EmptyFavorite -> {
+                    hideFavBar(true)
+                }
                 else -> throw Exception("Unsupported state type")
 
             }
@@ -95,20 +113,30 @@ class ContactListFragment : Fragment(), ContactAdapter.ContactListerner {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.main_menu, menu)
-
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return NavigationUI.onNavDestinationSelected(
-                item,
-                requireView().findNavController()
-        ) || super.onOptionsItemSelected(item)
+        return when (item.itemId) {
+            R.id.addFragment -> {
+                val action = ContactListFragmentDirections.actionContactListFragmentToAddFragment(null, "ADD")
+                findNavController().navigate(action)
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
 
     override fun onResume() {
         super.onResume()
         viewModel.getAllContact()
+        viewModel.getAllFav()
+    }
+
+    private fun hideFavBar(isEmpty: Boolean){
+        binding.run {
+            rvFavorite.visibility = if (isEmpty) View.GONE else View.VISIBLE
+        }
     }
 
     private fun showMessage(message: String) {
@@ -131,8 +159,14 @@ class ContactListFragment : Fragment(), ContactAdapter.ContactListerner {
         TODO("Not yet implemented")
     }
 
-    override fun onChange(contactModel: ContactModel) {
+    override fun onFavorite(contactModel: ContactModel) {
         TODO("Not yet implemented")
+    }
+
+    override fun onLongPress(contactModel: ContactModel) {
+        Toast.makeText(requireActivity(), "Long Pressed worked", Toast.LENGTH_SHORT).show()
+
+
     }
 
 

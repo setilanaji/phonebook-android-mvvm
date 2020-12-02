@@ -1,17 +1,19 @@
 package com.ydh.phonebookmvvm.view.adapter
 
 import android.content.Context
+import android.content.DialogInterface
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.databinding.BindingAdapter
-import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.ydh.phonebookmvvm.databinding.ItemContactBinding
 import com.ydh.phonebookmvvm.databinding.ItemHeaderBinding
 import com.ydh.phonebookmvvm.model.ContactModel
 import java.util.*
+
 
 sealed class Contact{
     data class Category(val category: String):Contact()
@@ -19,7 +21,7 @@ sealed class Contact{
 }
 
 class ContactAdapter(
-        private val context: Context, private val listener: ContactListerner
+    private val context: Context, private val listener: ContactListener
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var contactList = mutableListOf<Contact>()
 
@@ -28,11 +30,11 @@ class ContactAdapter(
 
         return when(viewType){
             TYPE_HEADER -> HeaderViewHolder(
-                    ItemHeaderBinding.inflate(LayoutInflater.from(context), parent, false)
+                ItemHeaderBinding.inflate(LayoutInflater.from(context), parent, false)
             )
             TYPE_DATA -> MyViewHolder(
-                    ItemContactBinding.inflate(LayoutInflater.from(context), parent, false),
-                    listener
+                ItemContactBinding.inflate(LayoutInflater.from(context), parent, false),
+                listener
             )
             else -> throw IllegalArgumentException("Unsupported view type")
         }
@@ -69,7 +71,7 @@ class ContactAdapter(
         }
     }
 
-    fun setData(item: MutableList<Contact>){
+    private fun setData(item: MutableList<Contact>){
         this.contactList = item
         notifyDataSetChanged()
     }
@@ -98,10 +100,11 @@ class ContactAdapter(
         notifyItemInserted(0)
     }
 
-    interface ContactListerner {
+    interface ContactListener {
         fun onClick(contactModel: ContactModel)
         fun onDelete(id: Long)
-        fun onChange(contactModel: ContactModel)
+        fun onFavorite(contactModel: ContactModel)
+        fun onLongPress(contactModel: ContactModel)
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
@@ -122,7 +125,7 @@ class ContactAdapter(
     }
 
     inner class HeaderViewHolder(
-            private val binding: ItemHeaderBinding
+        private val binding: ItemHeaderBinding
     ): RecyclerView.ViewHolder(binding.root){
         fun bindData(category: String){
             binding.run {
@@ -132,8 +135,9 @@ class ContactAdapter(
         }
     }
 
-    class MyViewHolder(val itemBinding: ItemContactBinding,
-                       private val listener: ContactListerner
+    class MyViewHolder(
+        val itemBinding: ItemContactBinding,
+        private val listener: ContactListener
     ) : RecyclerView.ViewHolder(itemBinding.root){
 
         private var binding : ItemContactBinding? = null
@@ -142,6 +146,10 @@ class ContactAdapter(
             this.binding = itemBinding
             this.itemBinding.ivItemContact.setOnClickListener {
                 listener.onClick(itemBinding.contact!!)
+            }
+            this.itemBinding.cvContact.setOnLongClickListener {
+                listener.onLongPress(itemBinding.contact!!)
+                return@setOnLongClickListener true
             }
 
 //            itemBinding.ivFavTodo.setOnClickListener{
@@ -174,7 +182,7 @@ class ContactAdapter(
                 }
                 Glide.with(view.context)
                         .load(imageUrl)
-                    .circleCrop()
+                        .apply(RequestOptions().circleCrop())
                         .into(view)
             }
         }
