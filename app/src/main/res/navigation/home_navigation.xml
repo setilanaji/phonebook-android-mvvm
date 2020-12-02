@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/home_navigation"
+    app:startDestination="@id/contactListFragment">
+
+    <fragment
+        android:id="@+id/contactListFragment"
+        android:name="com.ydh.phonebookmvvm.view.fragment.ContactListFragment"
+        android:label="fragment_contact_list"
+        tools:layout="@layout/fragment_contact_list" >
+        <action
+            android:id="@+id/action_contactListFragment_to_addFragment"
+            app:destination="@id/addFragment" />
+        <action
+            android:id="@+id/action_contactListFragment_to_contactDetailFragment"
+            app:destination="@id/contactDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/contactDetailFragment"
+        android:name="com.ydh.phonebookmvvm.view.fragment.ContactDetailFragment"
+        android:label="ContactDetailFragment" >
+        <action
+            android:id="@+id/action_contactDetailFragment_to_addFragment"
+            app:destination="@id/addFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addFragment"
+        android:name="com.ydh.phonebookmvvm.view.fragment.AddFragment"
+        android:label="fragment_add"
+        tools:layout="@layout/fragment_add" />
+</navigation>
