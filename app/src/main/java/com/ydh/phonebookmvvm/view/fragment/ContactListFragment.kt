@@ -26,6 +26,7 @@ import com.ydh.phonebookmvvm.view.adapter.FavoriteAdapter
 import com.ydh.phonebookmvvm.view.state.ContactListState
 import com.ydh.phonebookmvvm.viewmodel.ContactListViewModel
 import com.ydh.phonebookmvvm.viewmodel.ContactListViewModelFactory
+import kotlinx.android.synthetic.main.fragment_contact_list.*
 
 
 class ContactListFragment : Fragment(), ContactAdapter.ContactListener,
@@ -64,7 +65,9 @@ class ContactListFragment : Fragment(), ContactAdapter.ContactListener,
         return binding.root
     }
 
+
     private fun setView() {
+
         val colorDrawable = ColorDrawable(resources.getColor(R.color.bg_main))
         (activity as AppCompatActivity).supportActionBar?.setBackgroundDrawable(colorDrawable)
         (activity as AppCompatActivity).supportActionBar?.elevation = 0.0F
@@ -75,6 +78,10 @@ class ContactListFragment : Fragment(), ContactAdapter.ContactListener,
         binding.run {
             rvContactList.adapter = adapter
             rvFavorite.adapter = favAdapter
+            swipeRefresh.setOnRefreshListener {
+                onResume() // refresh your list contents somehow
+                swipeRefresh.isRefreshing = false
+            }
 
         }
     }
